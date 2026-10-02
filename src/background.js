@@ -1,8 +1,9 @@
 import { runSync, schedule, getProvider, testConnection, verifyIntegrity, prefetch, resolveConflict, enableE2EE, disableE2EE, queueClose, pollCommands, detectRemote, forgetE2EE, wipeRemote, keepLogin } from './modules/sync-engine.js';
 import { listDevices, removeDevice, ensureDeviceId } from './modules/device-manager.js';
 import { log, refreshBadge } from './modules/logger.js';
-import { getSettings, setSettings, setMeta, touch as touchMeta } from './modules/storage-adapter.js';
+import { getSettings, setSettings, getMeta, setMeta, touch as touchMeta } from './modules/storage-adapter.js';
 import { state } from './modules/util.js';
+import { CHANGELOG } from './modules/changelog.js';
 
 async function drawIcon() {
   try {
@@ -10,10 +11,8 @@ async function drawIcon() {
     for (const n of [16, 32, 48, 128]) {
       const x = new OffscreenCanvas(n, n).getContext('2d'), d = Math.PI / 180;
       x.lineCap = 'round'; x.lineJoin = 'round';
-      for (const [col, w] of [['#000000', .2], [accent, .11]]) {
-        x.strokeStyle = col; x.lineWidth = n * w; x.beginPath();
-        x.arc(n * .5, n * .3, n * .2, -30 * d, 90 * d, true); x.arc(n * .5, n * .7, n * .2, -90 * d, 150 * d, false); x.stroke();
-      }
+      x.strokeStyle = accent; x.lineWidth = n * .15; x.beginPath();
+      x.arc(n * .5, n * .3, n * .2, -30 * d, 90 * d, true); x.arc(n * .5, n * .7, n * .2, -90 * d, 150 * d, false); x.stroke();
       imageData[n] = x.getImageData(0, 0, n, n);
     }
     await chrome.action.setIcon({ imageData });
@@ -24,7 +23,11 @@ let lastAccent;
 chrome.storage.onChanged.addListener(async (c, a) => { if (a === 'local' && c.settings && c.settings.newValue?.accent !== lastAccent) { lastAccent = c.settings.newValue?.accent; drawIcon(); } });
 chrome.runtime.onInstalled.addListener(async d => {
   await setSettings({}); await ensureDeviceId(); await schedule();
-  if (d.reason === 'update') await setMeta({ changelogPending: true });
+  const m0 = await getMeta(), top = CHANGELOG[0].version;
+  if (d.reason === 'update') {
+    const s = await getSettings(); if (s.accent === '#7aa2ff') await setSettings({ accent: '#000000' }); // old default was blue
+    if (m0.changelogSeen !== top) await setMeta({ changelogPending: true });
+  } else await setMeta({ changelogSeen: top });
   await refreshBadge(); await log('info', d.reason === 'update' ? 'Syncy updated to ' + chrome.runtime.getManifest().version : 'Syncy installed');
 });
 chrome.runtime.onStartup.addListener(async () => { await schedule(); refreshBadge(); });
@@ -36,7 +39,7 @@ chrome.alarms.onAlarm.addListener(async a => {
   else if (a.name === 'syncy-token') keepLogin();
   else if (a.name === 'syncy-verify') verifyIntegrity().catch(() => {});
 });
-self.addEventListener('offline', async () => { await setMeta({ offline: true, offlineReason: 'No internet connection' }); refreshBadge(); });
+setMeta({ syncing: false }); // a sync interrupted by a service-worker restart must not look stuck
 self.addEventListener('online', async () => { await setMeta({ offline: false, offlineReason: '' }); refreshBadge(); if ((await getSettings()).autoSync) runSync().catch(() => {}); });
 
 let q = Promise.resolve();

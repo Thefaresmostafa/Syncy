@@ -24,11 +24,11 @@ export const verifyPayload = async p => (await sha(hashSrcOf(p))) === p.hash;
 export class NetError extends Error { constructor(m) { super(m); this.name = 'NetError'; } }
 export async function fx(url, opts = {}) {
   const len = opts.body?.length || 0; let last;
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 5; i++) {
     const ac = new AbortController(), to = setTimeout(() => ac.abort(), 120000 + len / 50);
     try { return await fetch(url, { cache: 'no-store', credentials: 'omit', ...opts, signal: ac.signal }); }
     catch (e) { last = e; } finally { clearTimeout(to); }
-    if (i < 2) await new Promise(r => setTimeout(r, 700 * 2 ** i));
+    if (i < 4) await new Promise(r => setTimeout(r, 700 * 2 ** i));
   }
   let host = url; try { host = new URL(url).host; } catch {}
   throw new NetError(`Cannot reach ${host}: ${last?.name === 'AbortError' ? 'request timed out' : (last?.message || 'network error')}`);

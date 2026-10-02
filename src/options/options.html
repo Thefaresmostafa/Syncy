@@ -5,9 +5,9 @@
   <input type="password" id="lock-pw" placeholder="Master password" autocomplete="current-password"><p id="lock-err" class="err small"></p><button id="btn-unlock" class="btn primary">Unlock</button></div></div>
 <dialog id="dlg-changelog"><div class="row"><h2>What's new</h2><button id="btn-close-dlg" class="btn">Close</button></div><div id="changelog-body" class="clog"></div></dialog>
 <div class="page" id="page">
-<h1><svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path class="o" d="M15.43 6.06A3.96 3.96 0 1 0 12 12A3.96 3.96 0 1 1 8.57 17.94"/><path class="i" d="M15.43 6.06A3.96 3.96 0 1 0 12 12A3.96 3.96 0 1 1 8.57 17.94"/></svg> Syncy <span id="ver" class="badge"></span></h1>
+<h1><svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.43 6.06A3.96 3.96 0 1 0 12 12A3.96 3.96 0 1 1 8.57 17.94"/></svg> Syncy <span id="ver" class="badge"></span></h1>
 <button id="perm-banner" class="banner info" hidden>Allow Syncy to reach your sync server (click to grant access)</button>
-<div id="offline-banner" class="banner error" role="alert" hidden>Connection lost. Sync is paused until the cloud provider is reachable.<br><span id="offline-reason" class="small"></span></div>
+<div id="offline-banner" class="banner warn" role="alert" hidden>Can't reach your cloud right now. Syncy keeps retrying automatically.<br><span id="offline-reason" class="small"></span></div>
 <section class="card" id="sec-sync"><h2>Synchronization</h2>
   <label class="field">Cloud provider
     <select id="provider"><option value="webdav">WebDAV</option><option value="dropbox">Dropbox</option><option value="github">GitHub</option><option value="gdrive">Google Drive</option><option value="onedrive">OneDrive</option></select></label>

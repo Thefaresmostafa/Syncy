@@ -12,13 +12,14 @@ import { log, setHealth, refreshBadge } from './logger.js';
 import { state, nowIso, verifyPayload } from './util.js';
 import { getKey, wrap } from './e2ee.js';
 import { refreshIfNeeded } from '../login.js';
+import { hasHost } from './perm.js';
 
 const HANDLERS = { bookmarks, history, tabs, groups, settings: settingsH };
 const FAST = ['bookmarks', 'groups', 'settings'];
 const PATH = t => `Syncy/data/${t}.json`, SIDE = t => `Syncy/data/${t}.hash.json`;
 const store = async k => (await chrome.storage.local.get(k))[k];
 const types = s => Object.keys(HANDLERS).filter(t => s.sync[t] && (t !== 'groups' || chrome.tabGroups));
-let running = false;
+let running = false, runningSince = 0;
 
 export async function schedule() {
   for (const n of ['syncy-sync', 'syncy-prefetch', 'syncy-verify', 'syncy-commands', 'syncy-token']) await chrome.alarms.clear(n);
@@ -105,10 +106,9 @@ export async function processCommands(provider) {
 export async function pollCommands() { try { if (!running) await processCommands(await getProvider()); } catch {} }
 
 export async function runSync({ manual = false } = {}) {
-  if (running) throw new Error('A sync is already running');
-  running = true; await setMeta({ syncing: true });
+  if (running && Date.now() - runningSince < 600000) throw new Error('A sync is already running');
+  running = true; runningSince = Date.now(); await setMeta({ syncing: true });
   try {
-    if (!navigator.onLine) throw Object.assign(new Error('No internet connection'), { name: 'NetError' });
     const { s, provider } = await open(), filter = await loadFilter(s.exclude);
     await checkDevice(provider);
     await processCommands(provider).catch(() => 0);
@@ -145,7 +145,7 @@ export async function runSync({ manual = false } = {}) {
     await setMeta({ synced }); await chrome.storage.local.set({ syncCache: cache });
     if (enabled.length && failed === enabled.length) throw Object.assign(new Error(lastErr), { name: net ? 'NetError' : 'Error' });
     const m = await getMeta(), t = nowIso();
-    await setMeta({ lastSync: t, lastError: '', offline: false, offlineReason: '', unread: (m.unread || 0) + applied.length });
+    await setMeta({ lastSync: t, lastError: '', offline: false, offlineReason: '', retry: 0, unread: (m.unread || 0) + applied.length });
     chrome.alarms.clear('syncy-retry');
     const hist = (await store('syncHistory')) || []; hist.push({ t, manual, done, skipped, failed, conflicts });
     await chrome.storage.local.set({ syncHistory: hist.slice(-200) });
@@ -154,9 +154,11 @@ export async function runSync({ manual = false } = {}) {
   } catch (e) {
     const net = e.name === 'NetError';
     await log('error', net ? 'Connection lost: ' + e.message : e.message);
-    await setMeta(net ? { lastError: e.message, offline: true, offlineReason: e.message } : { lastError: e.message });
+    let reason = e.message;
+    if (net && !(await hasHost())) reason += ' Syncy has restricted site access: set Site access to "On all sites" in the extension settings (or tap Allow in the popup).';
+    await setMeta(net ? { lastError: e.message, offline: true, offlineReason: reason } : { lastError: e.message });
     await setHealth('error');
-    if (net) chrome.alarms.create('syncy-retry', { delayInMinutes: 1 }); // always reconnect automatically
+    if (net) { const n = ((await getMeta()).retry || 0) + 1; await setMeta({ retry: n }); chrome.alarms.create('syncy-retry', { delayInMinutes: Math.min(5, 0.5 * 2 ** (n - 1)) }); } // keeps retrying until the cloud is reachable
     throw e;
   } finally { running = false; await setMeta({ syncing: false }); }
 }
@@ -192,7 +194,7 @@ export async function verifyIntegrity({ repair = true } = {}) {
 }
 export async function prefetch() {
   const c = navigator.connection;
-  if (running || !navigator.onLine || (c && (c.saveData || /^(slow-2g|2g)$/.test(c.effectiveType)))) return;
+  if (running || (c && (c.saveData || /^(slow-2g|2g)$/.test(c.effectiveType)))) return;
   try {
     const { s, provider } = await open(), out = {};
     for (const t of types(s)) { const side = await readSide(provider, t); if (side) out[t] = { at: Date.now(), hash: side.hash }; }

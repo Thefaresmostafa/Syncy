@@ -1,12 +1,14 @@
 name: release
+# Edit the VERSION file by hand (for example 1.0.1), commit and push to main.
+# If tag v<VERSION> does not exist yet, this builds Chrome, Edge and Firefox zips and publishes the release automatically.
 on:
   push:
-    tags: ['v*']
+    branches: [main, master]
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'Release tag (for example v1.2.1)'
-        required: true
+      version:
+        description: 'Version to release (leave empty to use the VERSION file)'
+        required: false
 permissions:
   contents: write
 jobs:
@@ -14,21 +16,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check tag matches manifest version
+      - name: Read version
+        id: v
         run: |
-          TAG="${{ github.event.inputs.tag || github.ref_name }}"
-          V=$(python3 -c "import json;print(json.load(open('manifests/chrome.json'))['version'])")
-          [ "v$V" = "$TAG" ] || { echo "Tag $TAG does not match manifest version v$V"; exit 1; }
-      - id: d
-        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
-      - name: Build Chrome, Edge and Firefox packages
+          V="${{ github.event.inputs.version }}"
+          [ -n "$V" ] || V="$(tr -d ' \r\n' < VERSION)"
+          V="${V#v}"
+          echo "$V" | grep -Eq '^[0-9]+(\.[0-9]+){0,3}$' || { echo "::error::Version must look like 1.0.1 (got '$V')"; exit 1; }
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/v$V" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::v$V is already released. Change the VERSION file to publish a new release."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build packages
+        if: steps.v.outputs.exists == 'false'
         run: |
-          python3 build.py ${{ steps.d.outputs.date }}
-          cp dist/syncy-firefox-${{ steps.d.outputs.date }}.zip dist/syncy-firefox-${{ steps.d.outputs.date }}.xpi
-      - uses: softprops/action-gh-release@v2
+          D=$(date -u +%F)
+          python3 build.py "$D" "${{ steps.v.outputs.version }}"
+          cp "dist/syncy-firefox-$D.zip" "dist/syncy-firefox-$D.xpi"
+      - name: Publish release
+        if: steps.v.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
-          name: Syncy ${{ github.event.inputs.tag || github.ref_name }}
+          tag_name: v${{ steps.v.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          name: Syncy v${{ steps.v.outputs.version }}
           generate_release_notes: true
           files: |
             dist/*.zip

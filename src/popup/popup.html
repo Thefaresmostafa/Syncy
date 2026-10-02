@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><title>Syncy</title><link rel="stylesheet" href="../css/app.css"><link rel="stylesheet" href="popup.css"></head>
 <body>
 <header class="hdr">
-  <div class="brand"><svg id="brand-logo" class="logo" viewBox="0 0 24 24" aria-hidden="true"><path class="o" d="M15.43 6.06A3.96 3.96 0 1 0 12 12A3.96 3.96 0 1 1 8.57 17.94"/><path class="i" d="M15.43 6.06A3.96 3.96 0 1 0 12 12A3.96 3.96 0 1 1 8.57 17.94"/></svg><span id="brand-title">Syncy</span></div>
+  <div class="brand"><svg id="brand-logo" class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.43 6.06A3.96 3.96 0 1 0 12 12A3.96 3.96 0 1 1 8.57 17.94"/></svg><span id="brand-title">Syncy</span></div>
   <div class="hdr-actions">
     <button id="btn-logs" class="icon-btn" title="Sync logs" aria-label="Sync logs"><svg class="i" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg><span id="badge-log-status" class="dot"></span></button>
     <button id="btn-theme" class="icon-btn pal" title="Quick theme" aria-label="Quick theme"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a9 9 0 000 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.3-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.4c2.2 0 4-1.8 4-4 0-4.4-4-7.5-9.4-7.5zM6.5 12a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm3-4a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm3 4a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg></button>
@@ -15,7 +15,7 @@
 </header>
 <main id="view-main">
   <button id="banner-perm" class="banner info" hidden>Allow Syncy to reach your sync server (tap to grant access)</button>
-  <div id="banner-offline" class="banner error" role="alert" hidden>Connection lost. Sync is paused until the cloud provider is reachable.<br><span id="offline-reason" class="small"></span></div>
+  <div id="banner-offline" class="banner warn" role="alert" hidden>Can't reach your cloud right now. Syncy keeps retrying automatically.<br><span id="offline-reason" class="small"></span></div>
   <button id="banner-conflict" class="banner warn" hidden><span id="btn-conflicts"></span></button>
   <button id="btn-sync-now" class="btn primary wide"><svg class="i" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.3 0 6 2.7 6 6 0 1-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm0 14c-3.3 0-6-2.7-6-6 0-1 .25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><span>Sync now</span></button>
   <button id="btn-remote-tabs" class="btn wide"><svg class="i" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h10v4h8v10z"/></svg><span>Remote tabs</span></button>

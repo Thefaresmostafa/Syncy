@@ -1,7 +1,6 @@
 {
   "manifest_version": 3,
   "name": "Syncy",
-  "version": "1.2.2",
   "description": "Sync bookmarks, history, tabs, tab groups and settings across browsers via WebDAV, Dropbox, GitHub, Google Drive or OneDrive.",
   "minimum_chrome_version": "120",
   "permissions": ["storage", "tabs", "tabGroups", "bookmarks", "history", "alarms", "identity", "notifications", "unlimitedStorage"],

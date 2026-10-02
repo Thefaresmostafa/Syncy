@@ -5,7 +5,7 @@ WebDAV, Dropbox, GitHub (Gist), Google Drive or OneDrive. Optional end-to-end en
 
 ## Build
 ```
-python3 build.py            # dist/syncy-chrome|edge|firefox-<today>.zip
+python3 build.py            # dist/syncy-chrome|edge|firefox-<today>.zip (version from VERSION)
 ```
 Load unpacked: Chrome/Edge `chrome://extensions` > Developer mode > Load unpacked > `dist/chrome`.
 Firefox: `about:debugging` > This Firefox > Load Temporary Add-on > `dist/firefox/manifest.json`.
@@ -26,8 +26,12 @@ Firefox: the exact URI is written to Options > Activity log when Log in is press
 Stores: Chrome Web Store and Edge Add-ons take the Chrome/Edge zip; Firefox Add-ons (AMO) takes the Firefox zip.
 Google Drive refresh tokens only last forever if your Google OAuth app is published (apps in *Testing* expire after 7 days).
 
-## Releases
-Push a tag like `v1.2.1` (must match the manifest version) and `.github/workflows/release.yml` builds Chrome, Edge and Firefox zips and attaches them to a GitHub Release.
+## Releases (automatic)
+1. Make your change.
+2. Edit the `VERSION` file by hand (for example `1.0.1`).
+3. Commit and push to `main`.
+
+`.github/workflows/release.yml` then builds the Chrome, Edge and Firefox zips and publishes release `v<VERSION>`. If that version was already released nothing is published, so you always decide the version number. The version is injected at build time (it is not stored in the manifests).
 
 ## Limits
 `src/modules/limits.js` caps history (5000) and tabs per device (3000). Bookmarks are unlimited; large files are split into parts automatically.

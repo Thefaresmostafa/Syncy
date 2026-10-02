@@ -15,7 +15,8 @@ export async function refreshBadge() {
   try {
     const m = await getMeta(), { conflicts = [] } = await chrome.storage.local.get('conflicts');
     let text = '', color = '#7aa2ff';
-    if (m.health === 'error' || m.offline) { text = '!'; color = '#e5484d'; }
+    if (m.offline) { text = '!'; color = '#f5a524'; }
+    else if (m.health === 'error') { text = '!'; color = '#e5484d'; }
     else if (conflicts.length) { text = String(conflicts.length); color = '#f5a524'; }
     else if (m.health === 'warn') { text = '!'; color = '#f5a524'; }
     else if (m.unread > 0) { text = String(Math.min(m.unread, 99)); color = '#3dd68c'; }

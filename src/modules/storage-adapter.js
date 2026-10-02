@@ -1,7 +1,7 @@
 import * as sec from './security.js';
 import { nowIso } from './util.js';
 export const DEFAULTS = {
-  provider: 'webdav', autoSync: true, interval: 15, theme: 'dark', accent: '#7aa2ff',
+  provider: 'webdav', autoSync: true, interval: 15, theme: 'dark', accent: '#000000',
   sync: { history: true, bookmarks: true, tabs: true, groups: true, settings: true },
   exclude: '', logMax: 500, toast: true, conflictMode: 'ask', syncOnChange: false, prefetch: true, e2ee: false,
   masterEnabled: false, deviceId: null, deviceName: ''

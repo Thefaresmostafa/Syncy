@@ -1,13 +1,13 @@
 import '../modules/theme.js';
 import { getSettings, setSettings, getMeta, setMeta } from '../modules/storage-adapter.js';
 import { getLogs, clearLogs, refreshBadge } from '../modules/logger.js';
-import { renderChangelog } from '../modules/changelog.js';
+import { renderChangelog, CHANGELOG } from '../modules/changelog.js';
 import { hasHost, requestHost } from '../modules/perm.js';
 const $ = id => document.getElementById(id);
 const MAP = { history: 'chk-history', bookmarks: 'chk-bookmarks', tabs: 'chk-tabs', groups: 'chk-tab-groups', settings: 'chk-settings' };
 const NAMES = { history: 'History', bookmarks: 'Bookmarks', tabs: 'Open tabs', groups: 'Tab groups', settings: 'Settings' };
 const THEMES = [['dark', 'Dark'], ['light', 'Light'], ['amoled', 'AMOLED'], ['auto', 'System']];
-const ACCENTS = ['#7aa2ff', '#3dd68c', '#f5a524', '#ef5a5f', '#c084fc', '#2dd4bf', '#f472b6', '#94a3b8'];
+const ACCENTS = ['#000000', '#7aa2ff', '#3dd68c', '#f5a524', '#ef5a5f', '#c084fc', '#2dd4bf', '#f472b6', '#94a3b8'];
 const fmt = t => t && new Date(t).getTime() ? new Date(t).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'Never';
 const fmtFull = t => new Date(t).toLocaleString([], { dateStyle: 'medium', timeStyle: 'medium' });
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -24,11 +24,11 @@ async function render() {
   for (const [k, id] of Object.entries(MAP)) $(id).checked = s.sync[k];
   $('lbl-last-sync').textContent = fmt(m.lastSync); $('lbl-last-update').textContent = m.lastUpdate ? fmt(m.lastUpdate) : '–';
   $('lbl-e2ee').textContent = s.e2ee ? 'End-to-end (AES-256)' : 'Off';
-  const offline = m.offline || !navigator.onLine;
+  const offline = !!m.offline;
   $('banner-perm').hidden = host; $('banner-offline').hidden = !offline; $('offline-reason').textContent = m.offlineReason || '';
   $('banner-conflict').hidden = !conflicts.length;
   $('btn-conflicts').textContent = `${conflicts.length} sync conflict${conflicts.length > 1 ? 's' : ''} · Resolve`;
-  $('badge-log-status').className = 'dot ' + (offline || m.health === 'error' ? 'error' : conflicts.length || m.health === 'warn' ? 'warn' : '');
+  $('badge-log-status').className = 'dot ' + (!offline && m.health === 'error' ? 'error' : offline || conflicts.length || m.health === 'warn' ? 'warn' : '');
   $('btn-sync-now').classList.toggle('spin', !!m.syncing); $('btn-sync-now').disabled = !!m.syncing;
   $('lbl-data-counts').textContent = await counts();
   $('theme-chips').innerHTML = THEMES.map(([k, n]) => `<button data-t="${k}" aria-pressed="${s.theme === k}">${n}</button>`).join('');
@@ -101,9 +101,9 @@ $('conflict-list').onclick = async e => {
   if (!r?.ok) $('lbl-msg').textContent = r?.error || 'Could not resolve conflict';
   await showConflicts(); render();
 };
-$('btn-close-changelog').onclick = async () => { $('changelog-modal').hidden = true; await setMeta({ changelogPending: false }); };
+$('btn-close-changelog').onclick = async () => { $('changelog-modal').hidden = true; await setMeta({ changelogPending: false, changelogSeen: CHANGELOG[0].version }); };
 chrome.storage.onChanged.addListener((c, a) => { if (a === 'local' && (c.meta || c.settings || c.conflicts)) render(); });
-addEventListener('online', render); addEventListener('offline', render);
+addEventListener('online', render);
 chrome.tabs.onCreated.addListener(render); chrome.tabs.onRemoved.addListener(render);
 (async () => {
   await setMeta({ unread: 0 }); await refreshBadge(); await render();

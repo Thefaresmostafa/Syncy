@@ -8,7 +8,7 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '
 const send = async msg => { const r = await chrome.runtime.sendMessage(msg); if (!r?.ok) throw new Error(r?.error || 'Failed'); return r; };
 let S, SEC = {};
 const OAUTH = ['dropbox', 'gdrive', 'onedrive'], INTERVALS = [1, 5, 10, 15, 30, 60], THEMES = ['dark', 'light', 'amoled', 'auto'];
-const ACCENTS = ['#7aa2ff', '#3dd68c', '#f5a524', '#ef5a5f', '#c084fc', '#2dd4bf', '#f472b6', '#94a3b8'];
+const ACCENTS = ['#000000', '#7aa2ff', '#3dd68c', '#f5a524', '#ef5a5f', '#c084fc', '#2dd4bf', '#f472b6', '#94a3b8'];
 const EXPORT_KEYS = ['provider', 'autoSync', 'interval', 'theme', 'accent', 'sync', 'exclude', 'logMax', 'toast', 'conflictMode', 'syncOnChange', 'prefetch'];
 
 function renderForm() {
@@ -65,12 +65,12 @@ $('swatches').onclick = async e => { const c = e.target.dataset?.c; if (c) { awa
 $('btn-pal').onclick = async () => { const t = THEMES[(THEMES.indexOf(S.theme) + 1) % 4]; await save({ theme: t }); $('theme').value = t; };
 async function refreshStatus() {
   const m = await getMeta();
-  $('offline-banner').hidden = !(m.offline || !navigator.onLine); $('offline-reason').textContent = m.offlineReason || '';
+  $('offline-banner').hidden = !m.offline; $('offline-reason').textContent = m.offlineReason || '';
   $('perm-banner').hidden = await hasHost();
   if (m.lastVerify) $('verify-msg').textContent = `Last check ${new Date(m.lastVerify.t).toLocaleString()}: ${m.lastVerify.issues.length ? m.lastVerify.issues.join('; ') : 'all hashes match'}`;
 }
 $('perm-banner').onclick = async () => { await requestHost(); refreshStatus(); };
-addEventListener('online', refreshStatus); addEventListener('offline', refreshStatus);
+addEventListener('online', refreshStatus);
 chrome.storage.onChanged.addListener((c, a) => { if (a === 'local' && c.meta) refreshStatus(); });
 
 async function init() {
