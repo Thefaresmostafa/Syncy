@@ -11,7 +11,7 @@ import { log } from './modules/logger.js';
 import { NetError } from './modules/util.js';
 
 export const CONFIG = {
-  dropbox: { clientId: '' },
+  dropbox: { clientId: '.APPDROP' },
   gdrive: { clientId: '', clientSecret: '' },  // Google needs the secret of a "Web application" client
   onedrive: { clientId: '' }
 };
