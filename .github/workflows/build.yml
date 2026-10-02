@@ -1,0 +1,10 @@
+name: build
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 build.py
+      - uses: actions/upload-artifact@v4
+        with: { name: syncy-zips, path: dist/*.zip }

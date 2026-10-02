@@ -1,0 +1,35 @@
+name: release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (for example v1.2.1)'
+        required: true
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check tag matches manifest version
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          V=$(python3 -c "import json;print(json.load(open('manifests/chrome.json'))['version'])")
+          [ "v$V" = "$TAG" ] || { echo "Tag $TAG does not match manifest version v$V"; exit 1; }
+      - id: d
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: Build Chrome, Edge and Firefox packages
+        run: |
+          python3 build.py ${{ steps.d.outputs.date }}
+          cp dist/syncy-firefox-${{ steps.d.outputs.date }}.zip dist/syncy-firefox-${{ steps.d.outputs.date }}.xpi
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: Syncy ${{ github.event.inputs.tag || github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/*.zip
+            dist/*.xpi

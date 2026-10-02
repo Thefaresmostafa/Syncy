@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Syncy</title><link rel="stylesheet" href="../css/app.css"><link rel="stylesheet" href="popup.css"></head>
+<body>
+<header class="hdr">
+  <div class="brand"><svg id="brand-logo" class="logo" viewBox="0 0 24 24" aria-hidden="true"><path class="o" d="M15.43 6.06A3.96 3.96 0 1 0 12 12A3.96 3.96 0 1 1 8.57 17.94"/><path class="i" d="M15.43 6.06A3.96 3.96 0 1 0 12 12A3.96 3.96 0 1 1 8.57 17.94"/></svg><span id="brand-title">Syncy</span></div>
+  <div class="hdr-actions">
+    <button id="btn-logs" class="icon-btn" title="Sync logs" aria-label="Sync logs"><svg class="i" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg><span id="badge-log-status" class="dot"></span></button>
+    <button id="btn-theme" class="icon-btn pal" title="Quick theme" aria-label="Quick theme"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a9 9 0 000 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.3-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.4c2.2 0 4-1.8 4-4 0-4.4-4-7.5-9.4-7.5zM6.5 12a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm3-4a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm5 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm3 4a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg></button>
+    <button id="btn-settings" class="icon-btn" title="Settings" aria-label="Settings"><svg class="i" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></button>
+    <div id="theme-pop" class="pop" hidden>
+      <div class="chips" id="theme-chips"></div><div class="swatches" id="pop-swatches"></div>
+      <div class="row"><span class="small muted">Custom color</span><input type="color" id="pop-accent" aria-label="Custom accent color"></div>
+    </div>
+  </div>
+</header>
+<main id="view-main">
+  <button id="banner-perm" class="banner info" hidden>Allow Syncy to reach your sync server (tap to grant access)</button>
+  <div id="banner-offline" class="banner error" role="alert" hidden>Connection lost. Sync is paused until the cloud provider is reachable.<br><span id="offline-reason" class="small"></span></div>
+  <button id="banner-conflict" class="banner warn" hidden><span id="btn-conflicts"></span></button>
+  <button id="btn-sync-now" class="btn primary wide"><svg class="i" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.3 0 6 2.7 6 6 0 1-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm0 14c-3.3 0-6-2.7-6-6 0-1 .25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><span>Sync now</span></button>
+  <button id="btn-remote-tabs" class="btn wide"><svg class="i" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h10v4h8v10z"/></svg><span>Remote tabs</span></button>
+  <p id="lbl-msg" class="small err" role="status"></p>
+  <section class="card">
+    <label class="row"><span>History</span><span class="switch"><input type="checkbox" id="chk-history"><span></span></span></label>
+    <label class="row"><span>Bookmarks</span><span class="switch"><input type="checkbox" id="chk-bookmarks"><span></span></span></label>
+    <label class="row"><span>Open tabs</span><span class="switch"><input type="checkbox" id="chk-tabs"><span></span></span></label>
+    <label class="row" id="row-groups"><span>Tab groups</span><span class="switch"><input type="checkbox" id="chk-tab-groups"><span></span></span></label>
+    <label class="row"><span>Settings</span><span class="switch"><input type="checkbox" id="chk-settings"><span></span></span></label>
+  </section>
+  <footer class="foot small muted">
+    <div class="row"><span>Last sync</span><span id="lbl-last-sync">Never</span></div>
+    <div class="row"><span>Last change</span><span id="lbl-last-update">–</span></div>
+    <div class="row"><span>Encryption</span><span id="lbl-e2ee">Off</span></div>
+    <div id="lbl-data-counts" class="counts"></div>
+  </footer>
+</main>
+<main id="view-logs" hidden>
+  <div class="row"><button id="btn-back" class="btn">Back</button><button id="btn-clear-logs" class="btn">Clear activity</button></div>
+  <div class="seg"><button id="tab-history" class="on">Sync history</button><button id="tab-activity">Activity</button></div>
+  <ul id="log-list" class="logs"></ul>
+</main>
+<div id="modal" class="modal" hidden><div class="sheet"><div class="row"><strong>Remote tabs</strong><button id="btn-close-modal" class="btn">Close</button></div><div id="remote-list"></div></div></div>
+<div id="conflict-modal" class="modal" hidden><div class="sheet"><div class="row"><strong>Sync conflicts</strong><button id="btn-close-conflicts" class="btn">Close</button></div><p class="muted small">Both this device and the cloud changed. Choose which version to keep.</p><div id="conflict-list"></div></div></div>
+<div id="changelog-modal" class="modal" hidden><div class="sheet"><div class="row"><strong>What's new</strong><button id="btn-close-changelog" class="btn primary">Got it</button></div><div id="changelog-body" class="clog"></div></div></div>
+<script type="module" src="popup.js"></script>
+</body></html>

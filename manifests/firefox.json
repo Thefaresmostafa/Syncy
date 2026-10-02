@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Syncy",
+  "version": "1.2.2",
+  "description": "Sync bookmarks, history, tabs and settings across browsers via WebDAV, Dropbox, GitHub, Google Drive or OneDrive.",
+  "permissions": ["storage", "tabs", "tabGroups", "bookmarks", "history", "alarms", "identity", "notifications", "unlimitedStorage"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "scripts": ["background.js"], "type": "module" },
+  "action": { "default_title": "Syncy", "default_popup": "popup/popup.html", "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" } },
+  "options_page": "options/options.html",
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "browser_specific_settings": { "gecko": { "id": "syncy@syncy.extension", "strict_min_version": "140.0", "data_collection_permissions": { "required": ["bookmarksInfo", "browsingActivity"] } } }
+}

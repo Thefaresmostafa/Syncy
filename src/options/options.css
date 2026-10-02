@@ -1,0 +1,14 @@
+.page{max-width:720px;margin:0 auto;padding:28px 18px 60px;display:grid;gap:18px}
+h1{display:flex;align-items:center;gap:12px;margin:0 0 4px}h1 img{width:36px}
+h2{margin:0 0 14px;font-size:18px;display:flex;align-items:center;gap:10px}h3{margin:20px 0 8px;font-size:15px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:22px}
+.field{display:grid;gap:6px;margin-bottom:14px}.field.row{display:flex}
+.form{display:grid;gap:10px;margin-bottom:14px}.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}th{color:var(--muted)}
+td.ua{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lock{position:fixed;inset:0;background:var(--bg);z-index:10;display:grid;place-items:center;padding:20px}
+.box{width:360px;display:grid;gap:10px}.sw{justify-content:flex-start;gap:14px;flex-wrap:wrap}
+dialog{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:24px;max-width:460px;width:92%}
+dialog::backdrop{background:rgba(0,0,0,.55)}

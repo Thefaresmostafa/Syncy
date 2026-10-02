@@ -1,0 +1,34 @@
+body{width:360px;padding:16px}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700}.brand img{width:30px;height:30px}
+.hdr-actions{display:flex;gap:8px;position:relative}
+.wide{width:100%;margin-bottom:10px;padding:13px 18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:6px 18px;margin:6px 0 14px}
+.card .row{padding:11px 0}.card .row+.row{border-top:1px solid var(--line)}
+.foot{display:grid;gap:4px;padding:0 4px}.counts{margin-top:4px;color:var(--text);font-size:13px}
+.logs{list-style:none;margin:12px 0 0;padding:0;max-height:380px;overflow:auto;display:grid;gap:6px}
+.logs li{background:var(--surface);border-radius:14px;padding:8px 12px;font-size:12px;border-left:4px solid var(--ok)}
+.logs li.warn{border-color:var(--warn)}.logs li.error{border-color:var(--err)}
+.logs time{display:block;color:var(--muted);font-size:11px}
+.seg{display:flex;gap:4px;background:var(--surface);border-radius:9999px;padding:4px;margin-top:12px}
+.seg button{flex:1;border:0;background:none;padding:7px;border-radius:9999px;cursor:pointer;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--accent);color:var(--on-accent)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end}
+.sheet{background:var(--bg);width:100%;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:16px}
+.dev{background:var(--surface);border-radius:18px;padding:12px 14px;margin-top:10px}.dev h4{margin:0 0 6px}
+.tabrow{display:flex;align-items:center;gap:6px}
+.tabrow a{flex:1;min-width:0;color:var(--text);text-decoration:none;padding:5px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.tabrow a:hover{color:var(--accent)}
+.x{border:0;background:var(--surface2);color:var(--muted);width:24px;height:24px;border-radius:50%;cursor:pointer;flex:none}.x:hover{background:var(--err);color:#fff}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;font-size:12px}.cmp>div{background:var(--surface2);border-radius:14px;padding:8px 10px}
+.btns{display:flex;gap:8px}.btns .btn{flex:1;padding:8px 10px;font-size:12px}
+.pop{position:absolute;top:46px;right:0;z-index:5;width:300px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips button{border:1px solid var(--line);background:var(--surface2);border-radius:9999px;padding:6px 12px;cursor:pointer;font-weight:600}
+.chips button[aria-pressed=true]{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.err{min-height:0;margin:0 0 8px}
+.tabcard{display:flex;align-items:center;gap:8px;margin-top:8px}
+.tabbtn{flex:1;min-width:0;display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);background:var(--surface2);border-radius:16px;padding:8px 12px;cursor:pointer;transition:transform .12s,border-color .12s}
+.tabbtn:hover{border-color:var(--accent);transform:translateY(-1px)}.tabbtn:active{transform:scale(.98)}
+.fav{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.tt{display:grid;min-width:0}.tt b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tt small{color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.x{width:30px;height:30px}
